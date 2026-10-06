@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gạo's Birthday Surprise</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Playfair+Display:wght@500;600&display=swap');
+:root{
+  --blue:#4268a8; --ink:#31548d; --cream:#fff4dc; --paper:#fffaf0;
+  --sky:#dcecff; --yellow:#f6dfae; --shadow:rgba(35,55,95,.20);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10131b}
+body{font-family:'Patrick Hand',cursive;color:var(--ink)}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.scene{
+  position:fixed; inset:0; overflow:hidden;
+  background-color:#dcecff;
+  background-image:
+    linear-gradient(90deg,rgba(255,255,255,.18) 50%,transparent 50%),
+    linear-gradient(rgba(255,255,255,.18) 50%,transparent 50%);
+  background-size:72px 72px;
+  background-position:0 0,36px 36px;
+}
+.scene:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
+  background-image:repeating-linear-gradient(0deg,transparent 0 8px,rgba(55,85,125,.08) 9px 10px);
+  mix-blend-mode:multiply;
+}
+.topbar{
+  position:absolute;left:22px;right:22px;top:16px;height:44px;
+  display:flex;justify-content:space-between;align-items:center;z-index:20;
+}
+.brand{font-size:22px;color:#31548d;opacity:.85}
+.iconbtn{
+  width:40px;height:40px;border:3px solid var(--blue);border-radius:50%;
+  background:#fff7e7;color:var(--blue);font-size:20px;box-shadow:3px 3px 0 rgba(49,84,141,.2)
+}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:58px 6vw 40px}
+.screen.active{display:flex}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.script{font-family:'Playfair Display',serif;font-style:italic}
+.title{
+  font-size:clamp(38px,5vw,72px);font-weight:600;margin:0 0 16px;color:#244d87;
+  text-shadow:1px 2px 0 #fff;
+}
+.subtitle{font-size:clamp(22px,2.2vw,34px);margin:8px 0;color:#274e86}
+.small{font-size:22px}
+.underline{width:190px;height:4px;background:#4268a8;border-radius:50%;transform:rotate(-2deg);margin:10px auto 22px;opacity:.7}
+.gift{
+  position:relative;width:170px;height:145px;margin:10px auto 22px;filter:drop-shadow(7px 10px 0 rgba(39,78,134,.16));
+  animation:float 2.8s ease-in-out infinite;
+}
+.gift .lid{position:absolute;left:4px;top:24px;width:162px;height:36px;background:#fff0cf;border:4px solid var(--blue);border-radius:6px;transform:rotate(-1deg)}
+.gift .box{position:absolute;left:16px;top:57px;width:138px;height:82px;background:#fff0cf;border:4px solid var(--blue);border-radius:4px}
+.gift .v{position:absolute;left:76px;top:24px;width:20px;height:115px;background:#7397cf;border-left:3px solid var(--blue);border-right:3px solid var(--blue)}
+.gift .r1,.gift .r2{position:absolute;width:57px;height:31px;border:4px solid var(--blue);border-bottom:0;border-radius:50% 50% 0 50%;top:0;background:#8da9d7}
+.gift .r1{left:55px;transform:rotate(-25deg)}
+.gift .r2{left:85px;transform:scaleX(-1) rotate(-25deg)}
+.gift .heart{position:absolute;right:23px;bottom:15px;font-size:24px;color:#4268a8}
+@keyframes float{50%{transform:translateY(-8px) rotate(.7deg)}}
+.btn{
+  border:3px solid var(--blue);background:var(--cream);color:#274e86;
+  padding:9px 24px;border-radius:18px;font-size:23px;box-shadow:4px 5px 0 rgba(49,84,141,.22);
+  transition:.18s;min-width:160px
+}
+.btn:hover{transform:translateY(-2px)}
+.hand-note{font-size:25px;transform:rotate(-3deg);margin-top:5px}
+.menu{
+  display:grid;grid-template-columns:repeat(2,180px);gap:18px;margin-top:6px;
+}
+.menu-card{
+  height:170px;background:#fff5df;border:5px solid var(--blue);border-radius:13px;
+  box-shadow:5px 7px 0 rgba(49,84,141,.20);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;color:var(--ink);transition:.2s;position:relative;
+}
+.menu-card:hover{transform:translateY(-5px) rotate(-1deg)}
+.menu-card span{font-size:25px;margin-top:4px}
+.icon{font-size:68px;line-height:1}
+.back{
+  position:absolute;right:28px;bottom:24px;z-index:5;background:#fff2d2;border:3px solid var(--blue);
+  border-radius:13px;padding:5px 18px;font-size:20px;color:var(--ink);box-shadow:3px 4px 0 rgba(49,84,141,.2)
+}
+/* photos */
+.photo-wall{position:relative;width:min(1050px,86vw);height:min(610px,72vh)}
+.polaroid{
+  position:absolute;width:190px;background:#fffaf0;padding:10px 10px 30px;border:2px solid #d8d1c1;
+  box-shadow:5px 8px 12px var(--shadow);transform:rotate(var(--r));transition:.3s;
+}
+.polaroid:hover{z-index:5;transform:rotate(0) scale(1.04)}
+.polaroid img{width:100%;height:145px;object-fit:cover;background:#e9f0e7;display:block}
+.polaroid .caption{font-size:18px;margin-top:6px;color:#49628b}
+.p1{left:3%;top:7%;--r:-7deg}.p2{left:29%;top:0;--r:4deg}.p3{right:4%;top:8%;--r:7deg}
+.p4{left:12%;bottom:3%;--r:5deg}.p5{left:43%;bottom:0;--r:-4deg}.p6{right:13%;bottom:7%;--r:-7deg}
+.tape{position:absolute;top:-12px;left:50%;width:56px;height:18px;background:#a9c3df;transform:translateX(-50%) rotate(-3deg);opacity:.8}
+/* letter */
+.letter-paper{
+ width:min(850px,88vw);height:min(620px,73vh);background:#fff4dc;border:5px solid var(--blue);
+ border-radius:8px;box-shadow:9px 11px 0 rgba(49,84,141,.2);padding:42px 60px;position:relative;overflow:auto;
+ background-image:linear-gradient(rgba(85,105,130,.08) 1px,transparent 1px);background-size:100% 34px;
+}
+.letter-paper h2{font-size:42px;margin:0 0 20px}.letter-body{font-size:25px;line-height:1.55;white-space:pre-wrap;text-align:left}
+.from{font-size:25px;text-align:right;margin-top:24px}
+/* music */
+.music-card{
+ width:min(900px,90vw);background:#fff4dc;border:5px solid var(--blue);border-radius:10px;
+ box-shadow:8px 10px 0 rgba(49,84,141,.2);padding:35px;display:flex;align-items:center;gap:35px;
+}
+.record-wrap{position:relative;width:310px;height:310px;flex:none;display:grid;place-items:center}
+.record{width:285px;height:285px;border-radius:50%;background:repeating-radial-gradient(circle,#151515 0 5px,#222 6px 8px);border:10px solid #111;animation:spin 5s linear infinite;animation-play-state:paused;box-shadow:0 8px 16px #555}
+.record.playing{animation-play-state:running}
+.record:after{content:"";width:92px;height:92px;border-radius:50%;background:#c9d8ed;border:5px solid #fff;position:absolute;left:calc(50% - 46px);top:calc(50% - 46px)}
+.record:before{content:"♫";position:absolute;z-index:2;font-size:48px;left:calc(50% - 20px);top:calc(50% - 30px);color:#31548d}
+@keyframes spin{to{transform:rotate(360deg)}}
+.music-info{flex:1;text-align:left}.music-info h2{font-size:42px;margin:0 0 8px}.music-info p{font-size:25px;margin:5px 0 22px}
+.player{display:flex;gap:10px;align-items:center}.player .btn{min-width:70px;padding:5px 13px}
+.progress{height:8px;background:#c6d6ec;border:2px solid var(--blue);border-radius:10px;flex:1;overflow:hidden}.progress i{display:block;width:0;height:100%;background:#4268a8}
+/* cake */
+.cake-area{width:min(850px,90vw);text-align:center}
+.cake-title{font-size:40px;margin-bottom:5px}.cake-sub{font-size:24px}
+.cake{
+  position:relative;width:360px;height:290px;margin:10px auto 0;
+}
+.plate{position:absolute;bottom:18px;left:40px;width:280px;height:35px;background:#e7edf5;border:4px solid var(--blue);border-radius:50%}
+.tier{position:absolute;left:62px;bottom:48px;width:236px;height:105px;background:#fff4dc;border:5px solid var(--blue);border-radius:15px 15px 35px 35px;box-shadow:inset 0 -22px 0 #d8e6f7}
+.frost{position:absolute;left:62px;bottom:122px;width:236px;height:32px;background:#fffaf0;border:5px solid var(--blue);border-bottom:0;border-radius:30px 30px 5px 5px}
+.drip{position:absolute;bottom:102px;width:28px;height:45px;background:#fffaf0;border:4px solid var(--blue);border-top:0;border-radius:0 0 15px 15px}
+.d1{left:92px}.d2{left:153px;height:58px}.d3{right:91px;height:38px}
+.candles{position:absolute;left:91px;bottom:153px;width:180px;display:flex;justify-content:space-around}
+.candle{width:19px;height:65px;background:#9ab7df;border:4px solid var(--blue);border-radius:6px;position:relative;cursor:pointer}
+.candle.off{opacity:.38;transform:translateY(10px)}
+.flame{position:absolute;left:1px;top:-34px;font-size:28px;animation:flicker .35s infinite alternate}
+.off .flame{display:none}
+@keyframes flicker{to{transform:scale(.85) rotate(4deg)}}
+.cake-message{font-size:28px;margin:2px 0 15px}.hint{font-size:20px}
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;width:10px;height:18px;animation:fall 2.8s linear forwards}
+@keyframes fall{from{transform:translateY(-40px) rotate(0)}to{transform:translateY(100vh) rotate(600deg);opacity:0}}
+/* editor */
+#editor{background:rgba(255,255,255,.97);z-index:50;overflow:auto;align-items:flex-start;padding-top:70px}
+.editor-box{width:min(1000px,94vw);background:#fffaf0;border:4px solid var(--blue);border-radius:18px;padding:25px;box-shadow:8px 10px 0 rgba(49,84,141,.2);margin-bottom:30px}
+.editor-box h1{margin:0 0 8px;font-size:38px}.editor-box .lead{font-size:20px;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field{background:#f6edd8;border:2px dashed #7e9bc9;border-radius:12px;padding:12px}.field.full{grid-column:1/-1}
+label{display:block;font-size:21px;margin-bottom:5px}
+input[type=text],textarea,input[type=number]{
+ width:100%;border:2px solid #7b99c8;border-radius:9px;padding:8px 10px;background:#fffdf7;color:#274e86;font-size:19px
+}
+textarea{min-height:120px;resize:vertical}
+.file{font-size:17px}.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumb{width:74px;height:58px;object-fit:cover;border:2px solid var(--blue);border-radius:6px;background:#eee}
+.editor-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.danger{background:#ffe8e3}
+.note{font-size:18px;color:#5b6d89;margin-top:8px}
+@media(max-width:720px){
+ .menu{grid-template-columns:repeat(2,140px);gap:12px}.menu-card{width:140px;height:140px}.menu-card span{font-size:21px}.icon{font-size:54px}
+ .music-card{flex-direction:column;padding:22px}.record-wrap{width:250px;height:250px}.record{width:230px;height:230px}
+ .letter-paper{padding:30px 25px}.letter-paper h2{font-size:32px}.letter-body{font-size:21px}
+ .photo-wall{transform:scale(.78)}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+}
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="topbar">
+    <div class="brand">✦ Gạo's little surprise ✦</div>
+    <button class="iconbtn" onclick="openEditor()" title="Chỉnh quà">⚙</button>
+  </div>
+
+  <section id="home" class="screen active">
+    <div class="center">
+      <h1 class="title" id="homeTitle">Happy Birthday, baby!</h1>
+      <div class="underline"></div>
+      <div class="gift" onclick="go('menu')" title="Mở quà">
+        <div class="r1"></div><div class="r2"></div><div class="lid"></div><div class="box"></div><div class="v"></div><div class="heart">♡</div>
+      </div>
+      <div class="hand-note">You have a surprise waiting for you ♡</div>
+      <button class="btn" onclick="go('menu')" style="margin-top:18px">Mở hộp quà</button>
+    </div>
+  </section>
+
+  <section id="menu" class="screen">
+    <div class="center">
+      <h2 class="subtitle">A little surprise for you ✦</h2>
+      <div class="menu">
+        <button class="menu-card" onclick="go('photos')"><div class="icon">🖼️</div><span>Memories</span></button>
+        <button class="menu-card" onclick="go('music')"><div class="icon">🎵</div><span>Our song</span></button>
+        <button class="menu-card" onclick="go('letter')"><div class="icon">💌</div><span>Little letter</span></button>
+        <button class="menu-card" onclick="go('cake')"><div class="icon">🎂</div><span>Birthday cake</span></button>
+      </div>
+      <div class="hand-note">Click one to proceed!</div>
+    </div>
+  </section>
+
+  <section id="photos" class="screen">
+    <div class="center">
+      <h2 class="subtitle">A few little memories ♡</h2>
+      <div class="photo-wall" id="photoWall"></div>
+      <button class="back" onclick="go('menu')">← Back</button>
+    </div>
+  </section>
+
+  <section id="letter" class="screen">
+    <div class="letter-paper">
+      <h2 id="letterTitle">Dear Gạo,</h2>
+      <div class="letter-body" id="letterBody"></div>
+      <div class="from" id="letterFrom"></div>
+    </div>
+    <button class="back" onclick="go('menu')">← Back</button>
+  </section>
+
+  <section id="music" class="screen">
+    <div class="music-card">
+      <div class="record-wrap"><div class="record" id="record"></div></div>
+      <div class="music-info">
+        <h2 id="songName">Your special song</h2>
+        <p id="songCaption">Press play and let the little record spin ✦</p>
+        <div class="player">
+          <button class="btn" onclick="toggleMusic()" id="playBtn">▶</button>
+          <div class="progress"><i id="progress"></i></div>
+          <button class="btn" onclick="restartMusic()">↺</button>
+        </div>
+        <audio id="audio"></audio>
+      </div>
+    </div>
+    <button class="back" onclick="go('menu'); stopMusic()">← Back</button>
+  </section>
+
+  <section id="cake" class="screen">
+    <div class="cake-area">
+      <div class="cake-title" id="cakeTitle">Make a wish, Gạo! ✦</div>
+      <div class="cake-sub" id="cakeSub">Tap each candle to blow it out.</div>
+      <div class="cake">
+        <div class="plate"></div>
+        <div class="tier"></div><div class="frost"></div><div class="drip d1"></div><div class="drip d2"></div><div class="drip d3"></div>
+        <div class="candles" id="candles"></div>
+      </div>
+      <div class="cake-message" id="cakeMessage">Happy Birthday!</div>
+      <div class="hint">✨ When all the candles are out, your surprise appears ✨</div>
+    </div>
+    <button class="back" onclick="go('menu')">← Back</button>
+    <div class="confetti" id="confetti"></div>
+  </section>
+
+  <section id="editor" class="screen">
+    <div class="editor-box">
+      <h1>⚙ Chỉnh món quà của bạn</h1>
+      <p class="lead">Mọi thứ dưới đây đều chỉnh được. Bấm <b>Lưu</b> rồi mở lại trang là thấy ngay.</p>
+      <div class="grid">
+        <div class="field"><label>Tên người nhận</label><input id="eName" type="text"></div>
+        <div class="field"><label>Dòng chữ màn hình đầu</label><input id="eGreeting" type="text"></div>
+        <div class="field full"><label>Lời nhắn trên trang bánh</label><input id="eCakeMessage" type="text"></div>
+        <div class="field full"><label>Nội dung thư</label><textarea id="eLetter"></textarea></div>
+        <div class="field"><label>Tên người gửi</label><input id="eFrom" type="text"></div>
+        <div class="field"><label>Tên bài hát</label><input id="eSong" type="text"></div>
+        <div class="field"><label>Dòng mô tả bài hát</label><input id="eSongCaption" type="text"></div>
+        <div class="field"><label>Số nến (1–12)</label><input id="eCandles" type="number" min="1" max="12"></div>
+        <div class="field full">
+          <label>🎵 Thêm nhạc của bạn</label>
+          <input class="file" id="eAudio" type="file" accept="audio/*">
+          <div class="note">File nhạc được lưu ngay trên trình duyệt này. Nếu bạn mở web ở máy khác, hãy chọn file nhạc lại.</div>
+        </div>
+        <div class="field full">
+          <label>📸 Thêm tối đa 6 ảnh</label>
+          <input class="file" id="ePhotos" type="file" accept="image/*" multiple>
+          <div class="thumbs" id="thumbs"></div>
+          <div class="note">Ảnh sẽ biến thành các tấm polaroid giống phong cách video. Ảnh cũ được giữ nếu bạn không chọn ảnh mới.</div>
+        </div>
+      </div>
+      <div class="editor-actions">
+        <button class="btn" onclick="saveEditor()">✓ Lưu thay đổi</button>
+        <button class="btn" onclick="go('home')">Xem quà</button>
+        <button class="btn danger" onclick="resetGift()">↺ Khôi phục mẫu</button>
+      </div>
+      <div class="note">Mẹo: sau khi chỉnh xong, dùng chính file HTML này để đưa lên một dịch vụ host tĩnh nếu muốn có link gửi cho người khác.</div>
+    </div>
+    <button class="back" onclick="go('home')">← Đóng</button>
+  </section>
+</div>
+
+<script>
+const KEY='gao_birthday_v3';
+const defaults={
+  name:'Gạo',
+  greeting:'Happy Birthday, baby!',
+  cakeMessage:'Happy Birthday!',
+  letter:'Chúc mừng sinh nhật Gạo nha!\\n\\nMong Gạo luôn vui vẻ, hay ăn chóng lớn và mỗi ngày đều có thật nhiều điều đáng yêu. Đây là một món quà nhỏ mà cậu làm riêng cho Gạo.\\n\\nChúc tuổi mới của Gạo thật nhiều tiếng cười và những kỷ niệm thật đẹp nhé! ♡',
+  from:'Love, cậu ♡',
+  song:'Your special song',
+  songCaption:'Press play and let the little record spin ✦',
+  candles:4,
+  photos:[],
+  audio:''
+};
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(defaults);
+let audioEl=document.getElementById('audio');
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='photos') renderPhotos();
+  if(id==='cake') renderCake();
+  if(id==='letter') renderLetter();
+  if(id==='music') renderMusic();
+}
+function openEditor(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('editor').classList.add('active');
+  fillEditor();
+}
+function applyData(){
+  document.getElementById('homeTitle').textContent=data.greeting;
+  document.getElementById('letterTitle').textContent='Dear '+data.name+',';
+  document.getElementById('letterBody').textContent=data.letter;
+  document.getElementById('letterFrom').textContent=data.from;
+  document.getElementById('songName').textContent=data.song;
+  document.getElementById('songCaption').textContent=data.songCaption;
+  document.getElementById('cakeMessage').textContent=data.cakeMessage;
+  audioEl.src=data.audio||'';
+}
+function renderPhotos(){
+  const wall=document.getElementById('photoWall'); wall.innerHTML='';
+  const imgs=data.photos||[];
+  const positions=['p1','p2','p3','p4','p5','p6'];
+  if(!imgs.length){
+    wall.innerHTML='<div class="hand-note" style="font-size:28px;position:absolute;inset:0;display:grid;place-items:center">Thêm ảnh ở ⚙ Chỉnh quà nhé ♡</div>';
+    return;
+  }
+  imgs.slice(0,6).forEach((src,i)=>{
+    const d=document.createElement('div');d.className='polaroid '+positions[i];
+    d.innerHTML='<div class="tape"></div><img src="'+src+'"><div class="caption">memory '+(i+1)+' ♡</div>';
+    wall.appendChild(d);
+  });
+}
+function renderLetter(){applyData()}
+function renderMusic(){applyData()}
+function renderCake(){
+  applyData();
+  const wrap=document.getElementById('candles');wrap.innerHTML='';
+  for(let i=0;i<Math.max(1,Math.min(12,Number(data.candles)||4));i++){
+    const c=document.createElement('div');c.className='candle';
+    c.innerHTML='<div class="flame">🔥</div>';
+    c.onclick=()=>extinguish(c);
+    wrap.appendChild(c);
+  }
+  document.getElementById('cakeSub').textContent='Tap each candle to blow it out.';
+}
+function extinguish(c){
+  if(c.classList.contains('off'))return;
+  c.classList.add('off');
+  if(document.querySelectorAll('#candles .candle:not(.off)').length===0){
+    document.getElementById('cakeSub').textContent='Yay! Make your biggest wish! ✨';
+    burst();
+  }
+}
+function burst(){
+  const box=document.getElementById('confetti');box.innerHTML='';
+  for(let i=0;i<70;i++){
+    const x=document.createElement('i');
+    x.style.left=Math.random()*100+'%';x.style.top=(-10-Math.random()*30)+'%';
+    x.style.transform='rotate('+Math.random()*180+'deg)';
+    x.style.animationDelay=(Math.random()*.7)+'s';
+    x.style.background=['#4268a8','#f1c96b','#fff4dc','#8fb0df','#e9a5a5'][Math.floor(Math.random()*5)];
+    box.appendChild(x);
+  }
+  setTimeout(()=>box.innerHTML='',3500);
+}
+function toggleMusic(){
+  if(!audioEl.src){alert('Bạn chưa thêm file nhạc. Vào ⚙ Chỉnh quà → Thêm nhạc của bạn nhé.');return}
+  if(audioEl.paused){audioEl.play();document.getElementById('record').classList.add('playing');document.getElementById('playBtn').textContent='Ⅱ'}
+  else stopMusic();
+}
+function stopMusic(){audioEl.pause();document.getElementById('record').classList.remove('playing');document.getElementById('playBtn').textContent='▶'}
+function restartMusic(){if(!audioEl.src)return;audioEl.currentTime=0;audioEl.play();document.getElementById('record').classList.add('playing');document.getElementById('playBtn').textContent='Ⅱ'}
+audioEl.addEventListener('timeupdate',()=>{document.getElementById('progress').style.width=(audioEl.duration?(audioEl.currentTime/audioEl.duration*100):0)+'%'});
+audioEl.addEventListener('ended',()=>{document.getElementById('record').classList.remove('playing');document.getElementById('playBtn').textContent='▶'});
+
+function fillEditor(){
+  eName.value=data.name;eGreeting.value=data.greeting;eCakeMessage.value=data.cakeMessage;
+  eLetter.value=data.letter;eFrom.value=data.from;eSong.value=data.song;eSongCaption.value=data.songCaption;eCandles.value=data.candles;
+  thumbs.innerHTML='';
+  (data.photos||[]).forEach(src=>addThumb(src));
+}
+function addThumb(src){
+  const img=document.createElement('img');img.className='thumb';img.src=src;thumbs.appendChild(img);
+}
+ePhotos.addEventListener('change',async e=>{
+  const files=[...e.target.files].slice(0,6);
+  if(!files.length)return;
+  data.photos=[];
+  thumbs.innerHTML='';
+  for(const f of files){const src=await readFile(f);data.photos.push(src);addThumb(src)}
+});
+eAudio.addEventListener('change',async e=>{
+  const f=e.target.files[0];if(f)data.audio=await readFile(f);
+});
+function readFile(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+function saveEditor(){
+  data.name=eName.value.trim()||'Gạo';data.greeting=eGreeting.value.trim()||'Happy Birthday, baby!';
+  data.cakeMessage=eCakeMessage.value.trim()||'Happy Birthday!';data.letter=eLetter.value||'';
+  data.from=eFrom.value||'';data.song=eSong.value||'Your special song';data.songCaption=eSongCaption.value||'Press play and let the little record spin ✦';
+  data.candles=Math.max(1,Math.min(12,Number(eCandles.value)||4));
+  localStorage.setItem(KEY,JSON.stringify(data));applyData();alert('Đã lưu rồi nha ✨');go('home');
+}
+function resetGift(){
+  if(!confirm('Khôi phục về mẫu ban đầu?'))return;
+  data=structuredClone(defaults);localStorage.setItem(KEY,JSON.stringify(data));fillEditor();applyData();
+}
+applyData();
+if(new URLSearchParams(location.search).get('edit')==='1')openEditor();
+</script>
+</body>
+</html>
